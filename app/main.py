@@ -1,9 +1,10 @@
 from fastapi import FastAPI
+from app.config import APP_NAME, APP_VERSION
 
 app = FastAPI(
-    title="WhatsApp AI Bot",
-    description="Chatbot para WhatsApp con IA",
-    version="1.0.0"
+    title=APP_NAME,
+    version=APP_VERSION,
+    description="Chatbot para WhatsApp con IA"
 )
 
 
@@ -11,9 +12,10 @@ app = FastAPI(
 def home():
     return {
         "status": "online",
-        "project": "WhatsApp AI Bot",
-        "version": "1.0.0"
+        "project": APP_NAME,
+        "version": APP_VERSION
     }
+
 
 @app.get("/health")
 def health():
