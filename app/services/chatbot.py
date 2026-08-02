@@ -9,93 +9,150 @@ class ChatBot:
     def process(self, phone: str, user_message: str):
 
         text = user_message.strip().lower()
-
         current_state = self.state.get_state(phone)
 
-        # ===============================
+        # ==================================================
         # MENU PRINCIPAL
-        # ===============================
+        # ==================================================
         if current_state == "MENU_PRINCIPAL":
 
             if text in ["hola", "hi", "buenas", "menu", "menú", "inicio"]:
 
                 return (
-                    "👋 ¡Hola! Bienvenido a IronFit 💪\n\n"
-                    "Soy tu asistente virtual.\n\n"
-                    "Selecciona una opción:\n\n"
-                    "🛒 1. Comprar productos\n"
-                    "🎉 2. Ver promociones\n"
-                    "📦 3. Seguimiento de pedido\n"
-                    "🏋️ 4. Rutinas de entrenamiento\n"
-                    "🥗 5. Nutrición\n"
-                    "👨‍💼 6. Hablar con un asesor\n"
-                    "🤖 7. Pregúntale a la IA\n\n"
-                    "Escribe el número de la opción."
+                    "🎉 ¡Bienvenido a Kusi Celebration!\n\n"
+                    "Gracias por escribirnos.\n\n"
+                    "¿En qué podemos ayudarte hoy?\n\n"
+                    "1️⃣ Tarjetas de cumpleaños\n"
+                    "2️⃣ Polos personalizados\n"
+                    "3️⃣ Alquiler de Softplay\n"
+                    "4️⃣ Hablar con un asesor\n"
+                    "5️⃣ Resolver dudas con nuestra IA\n\n"
+                    "💬 Escribe el número de la opción que deseas."
                 )
 
-            if text == "1":
+            elif text == "1":
 
-                self.state.set_state(phone, "MENU_PRODUCTOS")
+                self.state.set_state(phone, "TARJETAS")
 
                 return (
-                    "🛒 Catálogo IronFit\n\n"
-                    "1️⃣ Muñequeras\n"
-                    "2️⃣ Rodilleras\n"
-                    "3️⃣ Fajas\n"
-                    "4️⃣ Accesorios\n\n"
+                    "🎂 Tarjetas de cumpleaños\n\n"
+                    "Tenemos tarjetas personalizadas para toda ocasión.\n\n"
                     "0️⃣ Volver al menú principal"
                 )
 
-            return "Escribe *Hola* para iniciar."
+            elif text == "2":
 
-        # ===============================
-        # MENU PRODUCTOS
-        # ===============================
-        if current_state == "MENU_PRODUCTOS":
+                self.state.set_state(phone, "POLOS")
 
-            if text == "1":
                 return (
-                    "🧤 Muñequeras IronFit\n\n"
-                    "💰 Precio: S/ 39.90\n"
-                    "📦 Stock disponible\n\n"
-                    "0️⃣ Volver"
+                    "👕 Polos personalizados\n\n"
+                    "Personalizamos polos para cumpleaños, empresas y eventos.\n\n"
+                    "0️⃣ Volver al menú principal"
                 )
 
-            if text == "2":
+            elif text == "3":
+
+                self.state.set_state(phone, "SOFTPLAY")
+
                 return (
-                    "🦵 Rodilleras IronFit\n\n"
-                    "💰 Precio: S/ 89.90\n"
-                    "📏 Tallas: S, M, L\n\n"
-                    "0️⃣ Volver"
+                    "🎈 Alquiler de SoftPlay\n\n"
+                    "Contamos con diferentes tamaños y temáticas.\n\n"
+                    "0️⃣ Volver al menú principal"
                 )
 
-            if text == "3":
+            elif text == "4":
+
+                self.state.set_state(phone, "ASESOR")
+
                 return (
-                    "🏋️ Fajas IronFit\n\n"
-                    "💰 Precio: S/ 79.90\n\n"
-                    "0️⃣ Volver"
+                    "👨‍💼 Un asesor se pondrá en contacto contigo en unos minutos.\n\n"
+                    "0️⃣ Volver al menú principal"
                 )
 
-            if text == "4":
+            elif text == "5":
+
+                self.state.set_state(phone, "IA")
+
                 return (
-                    "🎽 Accesorios IronFit\n\n"
-                    "Tenemos straps, cinturones y bandas.\n\n"
-                    "0️⃣ Volver"
+                    "🤖 Has ingresado al modo IA.\n\n"
+                    "Hazme cualquier pregunta sobre nuestros productos o servicios.\n\n"
+                    "Escribe 0️⃣ para volver al menú principal."
                 )
+
+            return "😊 Escribe *Hola* para iniciar la conversación."
+
+        # ==================================================
+        # TARJETAS
+        # ==================================================
+        elif current_state == "TARJETAS":
 
             if text == "0":
+                self.state.reset_state(phone)
+                return self.process(phone, "hola")
 
-                self.state.set_state(phone, "MENU_PRINCIPAL")
+            return (
+                "🎂 Tarjetas de cumpleaños\n\n"
+                "Muy pronto mostraremos nuestro catálogo completo.\n\n"
+                "0️⃣ Volver al menú principal"
+            )
 
-                return (
-                    "👋 Menú principal\n\n"
-                    "1️⃣ Comprar productos\n"
-                    "2️⃣ Promociones\n"
-                    "3️⃣ Seguimiento\n"
-                    "4️⃣ Rutinas\n"
-                    "5️⃣ Nutrición\n"
-                    "6️⃣ Asesor\n"
-                    "7️⃣ IA"
-                )
+        # ==================================================
+        # POLOS
+        # ==================================================
+        elif current_state == "POLOS":
 
-            return "Selecciona una opción válida."
+            if text == "0":
+                self.state.reset_state(phone)
+                return self.process(phone, "hola")
+
+            return (
+                "👕 Polos personalizados\n\n"
+                "Muy pronto mostraremos nuestro catálogo completo.\n\n"
+                "0️⃣ Volver al menú principal"
+            )
+
+        # ==================================================
+        # SOFTPLAY
+        # ==================================================
+        elif current_state == "SOFTPLAY":
+
+            if text == "0":
+                self.state.reset_state(phone)
+                return self.process(phone, "hola")
+
+            return (
+                "🎈 Alquiler de SoftPlay\n\n"
+                "Muy pronto podrás ver todos nuestros paquetes.\n\n"
+                "0️⃣ Volver al menú principal"
+            )
+
+        # ==================================================
+        # ASESOR
+        # ==================================================
+        elif current_state == "ASESOR":
+
+            if text == "0":
+                self.state.reset_state(phone)
+                return self.process(phone, "hola")
+
+            return (
+                "👨‍💼 Hemos registrado tu solicitud.\n"
+                "Un asesor te responderá lo antes posible.\n\n"
+                "0️⃣ Volver al menú principal"
+            )
+
+        # ==================================================
+        # IA
+        # ==================================================
+        elif current_state == "IA":
+
+            if text == "0":
+                self.state.reset_state(phone)
+                return self.process(phone, "hola")
+
+            return (
+                "🤖 La IA estará disponible en el siguiente paso del proyecto.\n\n"
+                "0️⃣ Volver al menú principal"
+            )
+
+        return "😊 Escribe *Hola* para iniciar la conversación."
