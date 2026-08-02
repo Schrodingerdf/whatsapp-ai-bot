@@ -55,7 +55,7 @@ async def receive_message(request: Request):
         print("=" * 60)
 
         # Obtener respuesta del chatbot
-        response = chatbot.process(user_message)
+        response = chatbot.process(phone, user_message)
 
         # Enviar respuesta por WhatsApp
         whatsapp.send_text(
