@@ -11,6 +11,7 @@ VERIFY_TOKEN = os.getenv("VERIFY_TOKEN", "mi_token_super_secreto")
 
 WHATSAPP_TOKEN = os.getenv("WHATSAPP_TOKEN", "")
 PHONE_NUMBER_ID = os.getenv("PHONE_NUMBER_ID", "")
+ASESOR_PHONE = os.getenv("ASESOR_PHONE", "")
 
 # ==========================
 # GEMINI

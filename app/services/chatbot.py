@@ -1,5 +1,6 @@
 from app.services.state import StateManager
 from app.services.gemini import GeminiService
+from app.config import ASESOR_PHONE
 
 
 class ChatBot:
@@ -66,9 +67,21 @@ class ChatBot:
 
                 self.state.set_state(phone, "ASESOR")
 
+                mensaje = (
+                    "Hola, vengo desde el chatbot de Kusi Celebration y me gustaría recibir más información."
+                )
+
+                mensaje = mensaje.replace(" ", "%20")
+
+                link = f"https://wa.me/{ASESOR_PHONE}?text={mensaje}"
+
                 return (
-                    "👨‍💼 Un asesor se pondrá en contacto contigo en unos minutos.\n\n"
-                    "0️⃣ Volver al menú principal"
+                    "👨‍💼 *Atención personalizada*\n\n"
+                    "Gracias por comunicarte con *Kusi Celebration*. 💛\n\n"
+                    "Será un gusto atenderte de manera personalizada.\n\n"
+                    "📲 Haz clic en el siguiente enlace para conversar directamente con uno de nuestros asesores:\n\n"
+                    f"{link}\n\n"
+                    "✨ El mensaje ya estará preparado, solo deberás presionar *Enviar*."
                 )
 
             elif text == "5":
@@ -138,10 +151,19 @@ class ChatBot:
                 self.state.reset_state(phone)
                 return self.process(phone, "hola")
 
+            mensaje = (
+                "Hola, vengo desde el chatbot de Kusi Celebration y me gustaría recibir más información."
+            )
+
+            mensaje = mensaje.replace(" ", "%20")
+
+            link = f"https://wa.me/{ASESOR_PHONE}?text={mensaje}"
+
             return (
-                "👨‍💼 Hemos registrado tu solicitud.\n"
-                "Un asesor se comunicará contigo lo antes posible.\n\n"
-                "0️⃣ Volver al menú principal"
+                "👨‍💼 *Seguimos aquí para ayudarte.*\n\n"
+                "Si deseas conversar con un asesor, utiliza el siguiente enlace:\n\n"
+                f"{link}\n\n"
+                "0️⃣ Volver al menú principal."
             )
 
         # ==================================================
