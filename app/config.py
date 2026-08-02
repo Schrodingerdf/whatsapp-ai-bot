@@ -12,10 +12,18 @@ VERIFY_TOKEN = os.getenv("VERIFY_TOKEN", "mi_token_super_secreto")
 WHATSAPP_TOKEN = os.getenv("WHATSAPP_TOKEN", "")
 PHONE_NUMBER_ID = os.getenv("PHONE_NUMBER_ID", "")
 
+# ==========================
+# GEMINI
+# ==========================
+
+GEMINI_API_KEY = os.getenv("GEMINI_API_KEY", "")
+GEMINI_MODEL = os.getenv("GEMINI_MODEL", "gemini-2.5-flash-lite")
+
 print("=" * 60)
 print("CONFIG CARGADA")
 print("APP_NAME:", APP_NAME)
 print("PHONE_NUMBER_ID:", repr(PHONE_NUMBER_ID))
 print("TOKEN EXISTE:", bool(WHATSAPP_TOKEN))
 print("TOKEN PRIMEROS 10:", WHATSAPP_TOKEN[:10] if WHATSAPP_TOKEN else "VACIO")
+print("GEMINI:", bool(GEMINI_API_KEY))
 print("=" * 60)

@@ -1,10 +1,12 @@
 from app.services.state import StateManager
+from app.services.gemini import GeminiService
 
 
 class ChatBot:
 
     def __init__(self):
         self.state = StateManager()
+        self.gemini = GeminiService()
 
     def process(self, phone: str, user_message: str):
 
@@ -24,7 +26,7 @@ class ChatBot:
                     "¿En qué podemos ayudarte hoy?\n\n"
                     "1️⃣ Tarjetas de cumpleaños\n"
                     "2️⃣ Polos personalizados\n"
-                    "3️⃣ Alquiler de Softplay\n"
+                    "3️⃣ Alquiler de SoftPlay\n"
                     "4️⃣ Hablar con un asesor\n"
                     "5️⃣ Resolver dudas con nuestra IA\n\n"
                     "💬 Escribe el número de la opción que deseas."
@@ -74,9 +76,10 @@ class ChatBot:
                 self.state.set_state(phone, "IA")
 
                 return (
-                    "🤖 Has ingresado al modo IA.\n\n"
-                    "Hazme cualquier pregunta sobre nuestros productos o servicios.\n\n"
-                    "Escribe 0️⃣ para volver al menú principal."
+                    "🤖 Bienvenido al Asistente IA de Kusi Celebration.\n\n"
+                    "Puedes hacerme cualquier pregunta y haré lo posible por ayudarte.\n\n"
+                    "💬 Escribe tu pregunta.\n\n"
+                    "0️⃣ Volver al menú principal."
                 )
 
             return "😊 Escribe *Hola* para iniciar la conversación."
@@ -137,7 +140,7 @@ class ChatBot:
 
             return (
                 "👨‍💼 Hemos registrado tu solicitud.\n"
-                "Un asesor te responderá lo antes posible.\n\n"
+                "Un asesor se comunicará contigo lo antes posible.\n\n"
                 "0️⃣ Volver al menú principal"
             )
 
@@ -150,9 +153,13 @@ class ChatBot:
                 self.state.reset_state(phone)
                 return self.process(phone, "hola")
 
+            respuesta = self.gemini.ask(user_message)
+
             return (
-                "🤖 La IA estará disponible en el siguiente paso del proyecto.\n\n"
-                "0️⃣ Volver al menú principal"
+                f"🤖 {respuesta}\n\n"
+                "━━━━━━━━━━━━━━\n"
+                "💬 Puedes seguir preguntándome.\n"
+                "0️⃣ Volver al menú principal."
             )
 
         return "😊 Escribe *Hola* para iniciar la conversación."
