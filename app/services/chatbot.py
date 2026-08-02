@@ -68,14 +68,6 @@ class ChatBot:
 
                 self.state.set_state(phone, "ASESOR")
 
-                mensaje = (
-                    "Hola, vengo desde el chatbot de Kusi Celebration y me gustaría recibir más información."
-                )
-
-                mensaje = mensaje.replace(" ", "%20")
-
-                link = f"https://wa.me/{ASESOR_PHONE}?text={mensaje}"
-
                 return (
                     "👨‍💼 *Atención personalizada*\n\n"
                     "¡Gracias por comunicarte con *Kusi Celebration*! 💛\n\n"

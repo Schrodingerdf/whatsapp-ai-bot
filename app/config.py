@@ -13,6 +13,7 @@ WHATSAPP_TOKEN = os.getenv("WHATSAPP_TOKEN", "")
 PHONE_NUMBER_ID = os.getenv("PHONE_NUMBER_ID", "")
 ASESOR_PHONE = os.getenv("ASESOR_PHONE", "")
 ASESOR_LINK = os.getenv("ASESOR_LINK", "")
+TARJETAS_AUDIO_ID = os.getenv("TARJETAS_AUDIO_ID", "")
 
 # ==========================
 # GEMINI

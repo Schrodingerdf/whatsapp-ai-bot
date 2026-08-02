@@ -4,6 +4,7 @@ from fastapi.responses import PlainTextResponse
 from app.config import VERIFY_TOKEN
 from app.services.whatsapp import WhatsAppService
 from app.services.chatbot import ChatBot
+from app.services.state import StateManager
 
 router = APIRouter(
     prefix="/webhook",
@@ -12,6 +13,7 @@ router = APIRouter(
 
 whatsapp = WhatsAppService()
 chatbot = ChatBot()
+state = StateManager()
 
 
 @router.get("")
@@ -36,7 +38,7 @@ async def receive_message(request: Request):
 
         value = body["entry"][0]["changes"][0]["value"]
 
-        # Si no es un mensaje, no hacemos nada
+        # Si no es un mensaje
         if "messages" not in value:
             return {"status": "ok"}
 
@@ -54,16 +56,30 @@ async def receive_message(request: Request):
         print("MENSAJE:", user_message)
         print("=" * 60)
 
-        # Obtener respuesta del chatbot
+        # Estado antes de procesar el mensaje
+        previous_state = state.get_state(phone)
+
+        # Procesar chatbot
         response = chatbot.process(phone, user_message)
 
-        # Enviar respuesta por WhatsApp
+        # Enviar respuesta
         whatsapp.send_text(
             to=phone,
             message=response
         )
 
+        # ==================================================
+        # ENVIAR AUDIO DE TARJETAS
+        # ==================================================
+
+        if previous_state == "MENU_PRINCIPAL" and user_message.strip() == "1":
+
+            whatsapp.send_audio(
+                to=phone
+            )
+
     except Exception as e:
+
         print("=" * 60)
         print("ERROR EN WEBHOOK")
         print(e)
