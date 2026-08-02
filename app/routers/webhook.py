@@ -26,6 +26,7 @@ async def verify_webhook(
 
 
 @router.post("")
+print("POST /webhook RECIBIDO")
 async def receive_message(request: Request):
 
     body = await request.json()
