@@ -1,10 +1,12 @@
 from dotenv import load_dotenv
 import os
 
-# Cargar variables del archivo .env
 load_dotenv()
 
-# Configuración de la aplicación
-APP_NAME = os.getenv("APP_NAME")
-APP_VERSION = os.getenv("APP_VERSION")
-ENVIRONMENT = os.getenv("ENVIRONMENT")
+APP_NAME = os.getenv("APP_NAME", "WhatsApp AI Bot")
+APP_VERSION = os.getenv("APP_VERSION", "1.0.0")
+ENVIRONMENT = os.getenv("ENVIRONMENT", "development")
+
+VERIFY_TOKEN = os.getenv("VERIFY_TOKEN", "")
+WHATSAPP_TOKEN = os.getenv("WHATSAPP_TOKEN", "")
+PHONE_NUMBER_ID = os.getenv("PHONE_NUMBER_ID", "")
