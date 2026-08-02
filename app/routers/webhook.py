@@ -31,6 +31,7 @@ async def receive_message(request: Request):
     body = await request.json()
 
     print("=" * 60)
+    print("MENSAJE RECIBIDO")
     print(body)
     print("=" * 60)
 
@@ -49,6 +50,6 @@ async def receive_message(request: Request):
         )
 
     except Exception as e:
-        print(e)
+        print(f"Error: {e}")
 
     return {"status": "ok"}
