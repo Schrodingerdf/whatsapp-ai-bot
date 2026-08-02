@@ -26,8 +26,9 @@ async def verify_webhook(
 
 
 @router.post("")
-print("POST /webhook RECIBIDO")
 async def receive_message(request: Request):
+
+    print("POST /webhook RECIBIDO")
 
     body = await request.json()
 
@@ -45,12 +46,14 @@ async def receive_message(request: Request):
         message = value["messages"][0]
         phone = message["from"]
 
+        print(f"DESTINO: {phone}")
+
         whatsapp.send_text(
             to=phone,
             message="👋 Hola, este mensaje fue enviado automáticamente desde tu chatbot."
         )
 
     except Exception as e:
-        print(f"Error: {e}")
+        print(f"ERROR: {e}")
 
     return {"status": "ok"}
