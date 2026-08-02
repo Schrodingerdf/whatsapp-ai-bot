@@ -23,13 +23,29 @@ class WhatsAppService:
             }
         }
 
+        print("=" * 60)
+        print("ENVIANDO MENSAJE A WHATSAPP")
+        print("URL:", url)
+        print("DESTINO:", to)
+        print("PAYLOAD:", payload)
+        print("=" * 60)
+
         response = requests.post(
             url,
             headers=headers,
             json=payload
         )
 
-        print(response.status_code)
-        print(response.text)
+        print("=" * 60)
+        print("RESPUESTA DE META")
+        print("STATUS:", response.status_code)
+        print("BODY:", response.text)
+        print("=" * 60)
 
-        return response.json()
+        try:
+            return response.json()
+        except Exception:
+            return {
+                "status_code": response.status_code,
+                "body": response.text
+            }
