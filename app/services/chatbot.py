@@ -1,6 +1,7 @@
 from app.services.state import StateManager
 from app.services.gemini import GeminiService
 from app.config import ASESOR_PHONE
+from app.config import ASESOR_LINK
 
 
 class ChatBot:
@@ -77,11 +78,10 @@ class ChatBot:
 
                 return (
                     "👨‍💼 *Atención personalizada*\n\n"
-                    "Gracias por comunicarte con *Kusi Celebration*. 💛\n\n"
-                    "Será un gusto atenderte de manera personalizada.\n\n"
-                    "📲 Haz clic en el siguiente enlace para conversar directamente con uno de nuestros asesores:\n\n"
-                    f"{link}\n\n"
-                    "✨ El mensaje ya estará preparado, solo deberás presionar *Enviar*."
+                    "¡Gracias por comunicarte con *Kusi Celebration*! 💛\n\n"
+                    "Será un gusto atenderte de manera personalizada y ayudarte con cualquier consulta, cotización o pedido.\n\n"
+                    "📲 *Haz clic en el siguiente enlace para conversar directamente con uno de nuestros asesores:*\n\n"
+                    f"{ASESOR_LINK}"
                 )
 
             elif text == "5":
