@@ -25,6 +25,9 @@ class WhatsAppService:
 
         print("=" * 60)
         print("ENVIANDO MENSAJE A WHATSAPP")
+        print("PHONE_NUMBER_ID:", repr(PHONE_NUMBER_ID))
+        print("TOKEN EXISTE:", bool(WHATSAPP_TOKEN))
+        print("TOKEN PRIMEROS 10:", WHATSAPP_TOKEN[:10] if WHATSAPP_TOKEN else "VACIO")
         print("URL:", url)
         print("DESTINO:", to)
         print("PAYLOAD:", payload)
@@ -46,6 +49,6 @@ class WhatsAppService:
             return response.json()
         except Exception:
             return {
-                "status_code": response.status_code,
+                "status": response.status_code,
                 "body": response.text
             }
