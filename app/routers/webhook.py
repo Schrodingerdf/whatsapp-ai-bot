@@ -5,6 +5,7 @@ from app.config import VERIFY_TOKEN
 from app.services.whatsapp import WhatsAppService
 from app.services.chatbot import ChatBot
 from app.services.state import StateManager
+from app.services.reminder import ReminderService
 
 router = APIRouter(
     prefix="/webhook",

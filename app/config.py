@@ -14,6 +14,7 @@ PHONE_NUMBER_ID = os.getenv("PHONE_NUMBER_ID", "")
 ASESOR_PHONE = os.getenv("ASESOR_PHONE", "")
 ASESOR_LINK = os.getenv("ASESOR_LINK", "")
 TARJETAS_AUDIO_ID = os.getenv("TARJETAS_AUDIO_ID", "")
+REMINDER_SECONDS = int(os.getenv("REMINDER_SECONDS", "180"))
 
 # ==========================
 # GEMINI
