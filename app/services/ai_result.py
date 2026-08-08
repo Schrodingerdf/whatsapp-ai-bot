@@ -1,45 +1,53 @@
-from typing import Optional, List, Literal
+from typing import List, Optional
 
 from pydantic import BaseModel, Field
 
 
 class AIResult(BaseModel):
 
-    producto: Optional[
-        Literal[
-            "INVITACIONES",
-            "POLOS_CUMPLEAÑOS",
-            "TATUAJES",
-            "POLOS_TEMATICOS"
-        ]
-    ] = None
-
-    tematica: Optional[str] = None
-
-    clasificacion_diseno: Optional[
-        Literal[
-            "CATALOGO",
-            "NO_CATALOGO",
-            "MIX"
-        ]
-    ] = None
-
-    tipo_invitacion: Optional[
-        Literal[
-            "PREMIUM",
-            "CLASICA"
-        ]
-    ] = None
-
-    cambios: List[str] = Field(default_factory=list)
+    # ==================================================
+    # INTENCION
+    # ==================================================
 
     intencion: Optional[str] = None
+
+    # ==================================================
+    # PRODUCTO
+    # ==================================================
+
+    producto: Optional[str] = None
+
+    # ==================================================
+    # TEMATICAS
+    # ==================================================
+
+    tematicas: List[str] = Field(
+        default_factory=list
+    )
+
+    # ==================================================
+    # PERSONALIZACION
+    # ==================================================
+
+    personalizacion: bool = False
+
+    cambios: List[str] = Field(
+        default_factory=list
+    )
+
+    # ==================================================
+    # OPCION DE INVITACION
+    # ==================================================
+
+    tipo_invitacion: Optional[str] = None
+
+    # ==================================================
+    # INTENCIONES COMERCIALES
+    # ==================================================
 
     consulta_precio: bool = False
 
     negociacion: bool = False
-
-    consulta_tiempo_entrega: bool = False
 
     acepta: bool = False
 
@@ -48,8 +56,6 @@ class AIResult(BaseModel):
     consulta_estado_pedido: bool = False
 
     solicita_correccion: bool = False
-
-    pedido_confirmado: bool = False
 
     reclamo: bool = False
 
