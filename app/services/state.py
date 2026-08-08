@@ -12,22 +12,23 @@ class StateManager:
 
         user_data = self.user_states.get(phone)
 
-        # Si el usuario nunca ha hablado
+        # Usuario nuevo
         if user_data is None:
             return "MENU_PRINCIPAL"
 
         last_activity = user_data["last_activity"]
 
-        # Verificar si la sesión expiró
         expiration_time = last_activity + timedelta(
             minutes=SESSION_TIMEOUT_MINUTES
         )
 
+        # Verificar si la sesión expiró
         if datetime.now() >= expiration_time:
 
             print("=" * 60)
             print("SESION EXPIRADA")
             print("USUARIO:", phone)
+            print("ESTADO ANTERIOR:", user_data["state"])
             print("=" * 60)
 
             self.reset_state(phone)
