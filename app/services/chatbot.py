@@ -426,7 +426,33 @@ class ChatBot:
         print("=" * 60)
 
         # ==================================================
-        # SI EXISTE TEMATICA
+        # ASESOR EXPLICITO
+        # ==================================================
+
+        mensajes_asesor = [
+            "asesor",
+            "asesora",
+            "quiero hablar con un asesor",
+            "quiero hablar con una asesora",
+            "quiero hablar con alguien",
+            "quiero hablar con una persona",
+            "atención personalizada",
+            "atencion personalizada",
+        ]
+
+        solicita_asesor = any(
+            frase in user_message.strip().lower()
+            for frase in mensajes_asesor
+        )
+
+        if solicita_asesor:
+
+            return self.activar_asesor(
+                phone
+            )
+
+        # ==================================================
+        # BUSCAR TEMATICA
         # ==================================================
 
         if result.tematicas:
@@ -558,20 +584,7 @@ class ChatBot:
         # ==================================================
 
         # ----------------------------------------------
-        # ASESOR
-        # ----------------------------------------------
-
-        if (
-            result.negociacion
-            or result.requiere_asesor
-        ):
-
-            return self.activar_asesor(
-                phone
-            )
-
-        # ----------------------------------------------
-        # PEDIR TEMATICA NUEVAMENTE
+        # NO SE DETECTO TEMATICA
         # ----------------------------------------------
 
         return (
@@ -665,10 +678,26 @@ class ChatBot:
             )
 
         # ----------------------------------------------
-        # ASESOR
+        # ASESOR EXPLICITO
         # ----------------------------------------------
 
-        if result.requiere_asesor:
+        mensajes_asesor = [
+            "asesor",
+            "asesora",
+            "quiero hablar con un asesor",
+            "quiero hablar con una asesora",
+            "quiero hablar con alguien",
+            "quiero hablar con una persona",
+            "atención personalizada",
+            "atencion personalizada",
+        ]
+
+        solicita_asesor = any(
+            frase in text
+            for frase in mensajes_asesor
+        )
+
+        if solicita_asesor:
 
             return self.activar_asesor(
                 phone
@@ -708,10 +737,26 @@ class ChatBot:
         print("=" * 60)
 
         # ==================================================
-        # ASESOR
+        # ASESOR EXPLICITO
         # ==================================================
 
-        if result.requiere_asesor:
+        mensajes_asesor = [
+            "asesor",
+            "asesora",
+            "quiero hablar con un asesor",
+            "quiero hablar con una asesora",
+            "quiero hablar con alguien",
+            "quiero hablar con una persona",
+            "atención personalizada",
+            "atencion personalizada",
+        ]
+
+        solicita_asesor = any(
+            frase in text
+            for frase in mensajes_asesor
+        )
+
+        if solicita_asesor:
 
             return self.activar_asesor(
                 phone
