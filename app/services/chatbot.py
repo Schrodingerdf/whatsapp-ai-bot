@@ -12,7 +12,7 @@ class ChatBot:
         self.gemini = GeminiService()
 
     # ==================================================
-    # PROCESAR MENSAJE
+    # PROCESAR MENSAJE PRINCIPAL
     # ==================================================
 
     def process(self, phone: str, user_message: str):
@@ -21,7 +21,7 @@ class ChatBot:
 
         current_state = self.state.get_state(phone)
 
-        # Actualizar actividad
+        # Actualizar actividad del usuario
         self.state.touch(phone)
 
         print("=" * 60)
@@ -37,9 +37,9 @@ class ChatBot:
 
         if current_state == "MENU_PRINCIPAL":
 
-            # -----------------------------
-            # SALUDO
-            # -----------------------------
+            # ----------------------------------------------
+            # SALUDOS
+            # ----------------------------------------------
 
             if text in [
                 "hola",
@@ -52,9 +52,9 @@ class ChatBot:
 
                 return self.menu_principal()
 
-            # -----------------------------
+            # ----------------------------------------------
             # INVITACIONES
-            # -----------------------------
+            # ----------------------------------------------
 
             elif text == "1":
 
@@ -69,9 +69,9 @@ class ChatBot:
                     "para tu invitación? 🎈✨"
                 )
 
-            # -----------------------------
+            # ----------------------------------------------
             # POLOS
-            # -----------------------------
+            # ----------------------------------------------
 
             elif text == "2":
 
@@ -87,9 +87,9 @@ class ChatBot:
                     "0️⃣ Volver al menú principal"
                 )
 
-            # -----------------------------
+            # ----------------------------------------------
             # TATUAJES
-            # -----------------------------
+            # ----------------------------------------------
 
             elif text == "3":
 
@@ -105,9 +105,9 @@ class ChatBot:
                     "0️⃣ Volver al menú principal"
                 )
 
-            # -----------------------------
+            # ----------------------------------------------
             # POLOS TEMATICOS
-            # -----------------------------
+            # ----------------------------------------------
 
             elif text == "4":
 
@@ -123,9 +123,9 @@ class ChatBot:
                     "0️⃣ Volver al menú principal"
                 )
 
-            # -----------------------------
-            # MENSAJE LIBRE → GEMINI
-            # -----------------------------
+            # ----------------------------------------------
+            # OTRO MENSAJE → GEMINI
+            # ----------------------------------------------
 
             return self.procesar_con_ia(
                 phone,
@@ -150,7 +150,7 @@ class ChatBot:
             )
 
         # ==================================================
-        # INVITACIONES - OPCIONES
+        # INVITACIONES - ESPERANDO PREMIUM / CLASICA
         # ==================================================
 
         elif current_state == "INVITACIONES_OPCIONES":
@@ -280,7 +280,7 @@ class ChatBot:
         return self.menu_principal()
 
     # ==================================================
-    # GEMINI GENERAL
+    # PROCESAMIENTO GENERAL CON IA
     # ==================================================
 
     def procesar_con_ia(
@@ -298,9 +298,9 @@ class ChatBot:
         print(result.model_dump())
         print("=" * 60)
 
-        # -----------------------------
+        # ----------------------------------------------
         # ASESOR
-        # -----------------------------
+        # ----------------------------------------------
 
         if result.requiere_asesor:
 
@@ -308,9 +308,9 @@ class ChatBot:
                 phone
             )
 
-        # -----------------------------
+        # ----------------------------------------------
         # NEGOCIACION
-        # -----------------------------
+        # ----------------------------------------------
 
         if result.negociacion:
 
@@ -318,9 +318,9 @@ class ChatBot:
                 phone
             )
 
-        # -----------------------------
+        # ----------------------------------------------
         # INVITACIONES
-        # -----------------------------
+        # ----------------------------------------------
 
         if result.producto == "INVITACIONES":
 
@@ -335,9 +335,9 @@ class ChatBot:
                 result
             )
 
-        # -----------------------------
+        # ----------------------------------------------
         # POLOS
-        # -----------------------------
+        # ----------------------------------------------
 
         if result.producto == "POLOS_CUMPLEAÑOS":
 
@@ -353,9 +353,9 @@ class ChatBot:
                 "0️⃣ Volver al menú principal"
             )
 
-        # -----------------------------
+        # ----------------------------------------------
         # TATUAJES
-        # -----------------------------
+        # ----------------------------------------------
 
         if result.producto == "TATUAJES":
 
@@ -371,9 +371,9 @@ class ChatBot:
                 "0️⃣ Volver al menú principal"
             )
 
-        # -----------------------------
+        # ----------------------------------------------
         # POLOS TEMATICOS
-        # -----------------------------
+        # ----------------------------------------------
 
         if result.producto == "POLOS_TEMATICOS":
 
@@ -399,7 +399,7 @@ class ChatBot:
         )
 
     # ==================================================
-    # BUSCAR TEMATICA
+    # PROCESAR TEMATICA DE INVITACION
     # ==================================================
 
     def procesar_tematica_invitacion(
@@ -409,14 +409,156 @@ class ChatBot:
         result=None
     ):
 
+        # ----------------------------------------------
+        # CLASIFICAR CON GEMINI
+        # ----------------------------------------------
+
         if result is None:
 
             result = self.gemini.classify(
                 user_message
             )
 
+        print("=" * 60)
+        print("GEMINI - TEMATICA INVITACION")
+        print("MENSAJE:", user_message)
+        print("RESULTADO:", result.model_dump())
+        print("=" * 60)
+
+        # ==================================================
+        # SI EXISTE TEMATICA
+        # ==================================================
+
+        if result.tematicas:
+
+            resultados = buscar_tematicas(
+                result.tematicas
+            )
+
+            print("=" * 60)
+            print("BUSQUEDA DE TEMATICAS")
+            print("SOLICITADAS:", result.tematicas)
+            print("ENCONTRADAS:", resultados)
+            print("=" * 60)
+
+            # ==================================================
+            # VARIAS TEMATICAS ENCONTRADAS
+            # ==================================================
+
+            if len(resultados) > 1:
+
+                self.state.set_state(
+                    phone,
+                    "INVITACIONES_OPCIONES"
+                )
+
+                mensaje = (
+                    "✨ ¡Claro, mamita! 🥰\n\n"
+                    "Tenemos disponibles estas temáticas:\n\n"
+                )
+
+                for i, tematica in enumerate(
+                    resultados,
+                    start=1
+                ):
+
+                    mensaje += (
+                        f"{i}️⃣ *{tematica['nombre']}*\n"
+                        f"{tematica['link']}\n\n"
+                    )
+
+                mensaje += (
+                    "💬 ¿Cuál de las opciones te gustaría? ❤️"
+                )
+
+                return mensaje
+
+            # ==================================================
+            # UNA TEMATICA ENCONTRADA
+            # ==================================================
+
+            if len(resultados) == 1:
+
+                tematica = resultados[0]
+
+                self.state.set_state(
+                    phone,
+                    "INVITACIONES_OPCIONES"
+                )
+
+                # ------------------------------------------
+                # PERSONALIZACION DETECTADA
+                # ------------------------------------------
+
+                if result.personalizacion:
+
+                    return (
+                        "✨ ¡Perfecto! 🥳\n\n"
+                        f"Tenemos la temática de "
+                        f"*{tematica['nombre']}* disponible. ❤️\n\n"
+                        "Si deseas, también podemos tomarla "
+                        "como referencia y realizar las "
+                        "personalizaciones que necesites. ✨\n\n"
+                        "1️⃣ 💎 *PREMIUM*\n"
+                        "[LINK PREMIUM]\n\n"
+                        "2️⃣ 🌸 *CLÁSICA*\n"
+                        "[LINK CLÁSICA]\n\n"
+                        "💬 Elige *1* o *2* y luego cuéntame "
+                        "qué cambios te gustaría realizar. 🥰"
+                    )
+
+                # ------------------------------------------
+                # TEMATICA NORMAL
+                # ------------------------------------------
+
+                return (
+                    "✨ ¡Perfecto! 🥳\n\n"
+                    f"Tenemos una invitación de "
+                    f"*{tematica['nombre']}* para ti. ❤️\n\n"
+                    "📋 Te compartimos nuestras opciones:\n\n"
+                    "1️⃣ 💎 *PREMIUM*\n"
+                    "[LINK PREMIUM]\n\n"
+                    "2️⃣ 🌸 *CLÁSICA*\n"
+                    "[LINK CLÁSICA]\n\n"
+                    "💬 ¿Cuál opción te gustaría?\n"
+                    "Escribe *1* o *2*. 😊"
+                )
+
+            # ==================================================
+            # TEMATICA NO ENCONTRADA
+            # ==================================================
+
+            tematica_solicitada = ", ".join(
+                result.tematicas
+            )
+
+            self.state.set_state(
+                phone,
+                "INVITACIONES_OPCIONES"
+            )
+
+            return (
+                "✨ ¡Perfecto! 🥳\n\n"
+                f"Aunque actualmente no tenemos una "
+                f"invitación de *{tematica_solicitada}* "
+                "en nuestro catálogo, podemos prepararla "
+                "para ti. ❤️\n\n"
+                "Contamos con dos opciones:\n\n"
+                "1️⃣ 💎 *PREMIUM*\n"
+                "[LINK PREMIUM]\n\n"
+                "2️⃣ 🌸 *CLÁSICA*\n"
+                "[LINK CLÁSICA]\n\n"
+                "De cualquiera de estas opciones podemos "
+                "preparar tu temática, mamita. 🥰✨\n\n"
+                "💬 Escribe *1* para Premium o *2* para Clásica."
+            )
+
+        # ==================================================
+        # SI NO HAY TEMATICA
+        # ==================================================
+
         # ----------------------------------------------
-        # NEGOCIACION / ASESOR
+        # ASESOR
         # ----------------------------------------------
 
         if (
@@ -429,142 +571,21 @@ class ChatBot:
             )
 
         # ----------------------------------------------
-        # NO SE DETECTO TEMATICA
+        # PEDIR TEMATICA NUEVAMENTE
         # ----------------------------------------------
-
-        if not result.tematicas:
-
-            return (
-                "🥰 Cuéntame qué temática o personaje "
-                "te interesa para tu invitación.\n\n"
-                "Por ejemplo:\n"
-                "🐭 Mickey\n"
-                "🎮 Pokémon\n"
-                "🐮 Granja de Zenón\n"
-                "🎀 Princesas"
-            )
-
-        # ----------------------------------------------
-        # BUSCAR EN BASE
-        # ----------------------------------------------
-
-        resultados = buscar_tematicas(
-            result.tematicas
-        )
-
-        print("=" * 60)
-        print("BUSQUEDA DE TEMATICAS")
-        print("SOLICITADAS:", result.tematicas)
-        print("ENCONTRADAS:", resultados)
-        print("=" * 60)
-
-        # ----------------------------------------------
-        # VARIAS TEMATICAS ENCONTRADAS
-        # ----------------------------------------------
-
-        if len(resultados) > 1:
-
-            self.state.set_state(
-                phone,
-                "INVITACIONES_OPCIONES"
-            )
-
-            mensaje = (
-                "✨ ¡Claro, mamita! 🥰\n\n"
-                "Tenemos disponibles estas temáticas:\n\n"
-            )
-
-            for i, tematica in enumerate(
-                resultados,
-                start=1
-            ):
-
-                mensaje += (
-                    f"{i}️⃣ *{tematica['nombre']}*\n"
-                    f"{tematica['link']}\n\n"
-                )
-
-            mensaje += (
-                "¿Cuál de las opciones te gustaría? ❤️"
-            )
-
-            return mensaje
-
-        # ----------------------------------------------
-        # TEMATICA ENCONTRADA
-        # ----------------------------------------------
-
-        if len(resultados) == 1:
-
-            tematica = resultados[0]
-
-            self.state.set_state(
-                phone,
-                "INVITACIONES_OPCIONES"
-            )
-
-            if result.personalizacion:
-
-                return (
-                    "✨ ¡Perfecto! 🥳\n\n"
-                    f"Tenemos la temática de "
-                    f"*{tematica['nombre']}* disponible. ❤️\n\n"
-                    "Si deseas, también podemos tomarla "
-                    "como referencia y realizar las "
-                    "personalizaciones que necesites. ✨\n\n"
-                    "1️⃣ 💎 *PREMIUM*\n"
-                    "[LINK PREMIUM]\n\n"
-                    "2️⃣ 🌸 *CLÁSICA*\n"
-                    "[LINK CLÁSICA]\n\n"
-                    "💬 Elige *1* o *2* y luego cuéntame "
-                    "qué cambios te gustaría realizar. 🥰"
-                )
-
-            return (
-                "✨ ¡Perfecto! 🥳\n\n"
-                f"Tenemos una invitación de "
-                f"*{tematica['nombre']}* para ti. ❤️\n\n"
-                "📋 Te compartimos las características "
-                "de nuestras opciones:\n\n"
-                "1️⃣ 💎 *PREMIUM*\n"
-                "[LINK PREMIUM]\n\n"
-                "2️⃣ 🌸 *CLÁSICA*\n"
-                "[LINK CLÁSICA]\n\n"
-                "💬 ¿Cuál opción te gustaría?\n"
-                "Escribe *1* o *2*. 😊"
-            )
-
-        # ----------------------------------------------
-        # TEMATICA NO ENCONTRADA
-        # ----------------------------------------------
-
-        self.state.set_state(
-            phone,
-            "INVITACIONES_OPCIONES"
-        )
-
-        tematica_solicitada = ", ".join(
-            result.tematicas
-        )
 
         return (
-            "✨ ¡Perfecto! 🥳\n\n"
-            f"Aunque actualmente no tenemos una "
-            f"invitación de *{tematica_solicitada}* "
-            "en nuestro catálogo, podemos prepararla "
-            "para ti. ❤️\n\n"
-            "Contamos con dos opciones:\n\n"
-            "1️⃣ 💎 *PREMIUM*\n"
-            "[LINK PREMIUM]\n\n"
-            "2️⃣ 🌸 *CLÁSICA*\n"
-            "[LINK CLÁSICA]\n\n"
-            "De cualquiera de estas opciones podemos "
-            "preparar tu temática, mamita. 🥰✨\n\n"
-            "💬 Escribe *1* para Premium o *2* para Clásica."
+            "🥰 Cuéntame qué temática o personaje "
+            "te interesa para tu invitación.\n\n"
+            "Por ejemplo:\n"
+            "🐭 Mickey\n"
+            "🎮 Pokémon\n"
+            "🐮 Granja de Zenón\n"
+            "🎀 Princesas"
         )
 
     # ==================================================
-    # OPCION PREMIUM / CLASICA
+    # PROCESAR PREMIUM / CLASICA
     # ==================================================
 
     def procesar_opcion_invitacion(
@@ -618,7 +639,7 @@ class ChatBot:
             )
 
         # ==================================================
-        # SI ESCRIBE UNA TEMATICA NUEVA
+        # SI ESCRIBE OTRA TEMATICA
         # ==================================================
 
         result = self.gemini.classify(
@@ -627,10 +648,14 @@ class ChatBot:
 
         print("=" * 60)
         print("INTERPRETANDO OPCION INVITACION")
-        print(result.model_dump())
+        print("MENSAJE:", user_message)
+        print("RESULTADO:", result.model_dump())
         print("=" * 60)
 
-        # Si menciona otra temática
+        # ----------------------------------------------
+        # NUEVA TEMATICA
+        # ----------------------------------------------
+
         if result.tematicas:
 
             return self.procesar_tematica_invitacion(
@@ -639,12 +664,19 @@ class ChatBot:
                 result
             )
 
-        # Si solicita asesor
+        # ----------------------------------------------
+        # ASESOR
+        # ----------------------------------------------
+
         if result.requiere_asesor:
 
             return self.activar_asesor(
                 phone
             )
+
+        # ----------------------------------------------
+        # OPCION INVALIDA
+        # ----------------------------------------------
 
         return (
             "😊 Puedes indicarme cuál prefieres:\n\n"
@@ -671,7 +703,8 @@ class ChatBot:
 
         print("=" * 60)
         print("PERSONALIZACION")
-        print(result.model_dump())
+        print("MENSAJE:", user_message)
+        print("RESULTADO:", result.model_dump())
         print("=" * 60)
 
         # ==================================================
@@ -714,7 +747,7 @@ class ChatBot:
             )
 
         # ==================================================
-        # CAMBIOS
+        # CAMBIOS DETECTADOS
         # ==================================================
 
         if result.cambios:
@@ -733,7 +766,7 @@ class ChatBot:
             )
 
         # ==================================================
-        # SI NO SE ENTENDIO
+        # NO SE ENTENDIO
         # ==================================================
 
         return (
