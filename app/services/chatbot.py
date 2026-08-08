@@ -498,7 +498,6 @@ class ChatBot:
 
             tematica = resultados[0]
 
-            # Guardamos temporalmente la temática
             self.state.set_state(
                 phone,
                 "INVITACIONES_OPCIONES"
@@ -513,12 +512,12 @@ class ChatBot:
                     "Si deseas, también podemos tomarla "
                     "como referencia y realizar las "
                     "personalizaciones que necesites. ✨\n\n"
-                    "💎 *PREMIUM*\n"
+                    "1️⃣ 💎 *PREMIUM*\n"
                     "[LINK PREMIUM]\n\n"
-                    "🌸 *CLÁSICA*\n"
+                    "2️⃣ 🌸 *CLÁSICA*\n"
                     "[LINK CLÁSICA]\n\n"
-                    "Cuéntame qué cambios te gustaría "
-                    "realizar. 🥰"
+                    "💬 Elige *1* o *2* y luego cuéntame "
+                    "qué cambios te gustaría realizar. 🥰"
                 )
 
             return (
@@ -527,11 +526,12 @@ class ChatBot:
                 f"*{tematica['nombre']}* para ti. ❤️\n\n"
                 "📋 Te compartimos las características "
                 "de nuestras opciones:\n\n"
-                "💎 *PREMIUM*\n"
+                "1️⃣ 💎 *PREMIUM*\n"
                 "[LINK PREMIUM]\n\n"
-                "🌸 *CLÁSICA*\n"
+                "2️⃣ 🌸 *CLÁSICA*\n"
                 "[LINK CLÁSICA]\n\n"
-                "¿Cuál opción te gustaría? 😊"
+                "💬 ¿Cuál opción te gustaría?\n"
+                "Escribe *1* o *2*. 😊"
             )
 
         # ----------------------------------------------
@@ -554,13 +554,13 @@ class ChatBot:
             "en nuestro catálogo, podemos prepararla "
             "para ti. ❤️\n\n"
             "Contamos con dos opciones:\n\n"
-            "💎 *PREMIUM*\n"
+            "1️⃣ 💎 *PREMIUM*\n"
             "[LINK PREMIUM]\n\n"
-            "🌸 *CLÁSICA*\n"
+            "2️⃣ 🌸 *CLÁSICA*\n"
             "[LINK CLÁSICA]\n\n"
             "De cualquiera de estas opciones podemos "
             "preparar tu temática, mamita. 🥰✨\n\n"
-            "¿Cuál opción te gustaría? 😊"
+            "💬 Escribe *1* para Premium o *2* para Clásica."
         )
 
     # ==================================================
@@ -573,38 +573,84 @@ class ChatBot:
         user_message: str
     ):
 
+        text = user_message.strip().lower()
+
+        # ==================================================
+        # PREMIUM
+        # ==================================================
+
+        if text == "1":
+
+            self.state.set_state(
+                phone,
+                "INVITACIONES_PERSONALIZACION"
+            )
+
+            return (
+                "💎 *PREMIUM seleccionada* 🥰\n\n"
+                "¡Perfecto! ❤️\n\n"
+                "¿Deseas realizar algún cambio "
+                "en el diseño?\n\n"
+                "Si no deseas cambios, escribe *NO* "
+                "y continuamos con la cotización.\n\n"
+                "0️⃣ Volver al menú principal"
+            )
+
+        # ==================================================
+        # CLASICA
+        # ==================================================
+
+        if text == "2":
+
+            self.state.set_state(
+                phone,
+                "INVITACIONES_PERSONALIZACION"
+            )
+
+            return (
+                "🌸 *CLÁSICA seleccionada* 🥰\n\n"
+                "¡Perfecto! ❤️\n\n"
+                "¿Deseas realizar algún cambio "
+                "en el diseño?\n\n"
+                "Si no deseas cambios, escribe *NO* "
+                "y continuamos con la cotización.\n\n"
+                "0️⃣ Volver al menú principal"
+            )
+
+        # ==================================================
+        # SI ESCRIBE UNA TEMATICA NUEVA
+        # ==================================================
+
         result = self.gemini.classify(
             user_message
         )
 
+        print("=" * 60)
+        print("INTERPRETANDO OPCION INVITACION")
+        print(result.model_dump())
+        print("=" * 60)
+
+        # Si menciona otra temática
+        if result.tematicas:
+
+            return self.procesar_tematica_invitacion(
+                phone,
+                user_message,
+                result
+            )
+
+        # Si solicita asesor
         if result.requiere_asesor:
 
             return self.activar_asesor(
                 phone
             )
 
-        if result.tipo_invitacion == "PREMIUM":
-
-            return (
-                "💎 *PREMIUM seleccionada*\n\n"
-                "Perfecto. Ahora podemos continuar "
-                "con la personalización y el precio.\n\n"
-                "Cuéntame si deseas algún cambio. 😊"
-            )
-
-        if result.tipo_invitacion == "CLASICA":
-
-            return (
-                "🌸 *CLÁSICA seleccionada*\n\n"
-                "Perfecto. Ahora podemos continuar "
-                "con la personalización y el precio.\n\n"
-                "Cuéntame si deseas algún cambio. 😊"
-            )
-
         return (
             "😊 Puedes indicarme cuál prefieres:\n\n"
-            "💎 *Premium*\n"
-            "🌸 *Clásica*"
+            "1️⃣ 💎 *Premium*\n"
+            "2️⃣ 🌸 *Clásica*\n\n"
+            "💬 Escribe *1* o *2*."
         )
 
     # ==================================================
@@ -617,15 +663,59 @@ class ChatBot:
         user_message: str
     ):
 
+        text = user_message.strip().lower()
+
         result = self.gemini.classify(
             user_message
         )
+
+        print("=" * 60)
+        print("PERSONALIZACION")
+        print(result.model_dump())
+        print("=" * 60)
+
+        # ==================================================
+        # ASESOR
+        # ==================================================
+
+        if result.requiere_asesor:
+
+            return self.activar_asesor(
+                phone
+            )
+
+        # ==================================================
+        # NEGOCIACION
+        # ==================================================
 
         if result.negociacion:
 
             return self.activar_asesor(
                 phone
             )
+
+        # ==================================================
+        # NO QUIERE CAMBIOS
+        # ==================================================
+
+        if text in [
+            "no",
+            "no quiero",
+            "ninguno",
+            "ninguna",
+            "sin cambios",
+            "no deseo cambios"
+        ]:
+
+            return (
+                "Perfecto 😊\n\n"
+                "Continuemos con la cotización de tu "
+                "invitación. ❤️"
+            )
+
+        # ==================================================
+        # CAMBIOS
+        # ==================================================
 
         if result.cambios:
 
@@ -635,15 +725,22 @@ class ChatBot:
 
             return (
                 "✨ ¡Perfecto! 🥰\n\n"
-                f"He registrado estos cambios:\n"
+                "He registrado los siguientes cambios:\n\n"
                 f"📝 {cambios}\n\n"
-                "Un asesor podrá confirmar contigo "
-                "los detalles finales. ❤️"
+                "Ahora podemos continuar con la "
+                "cotización de tu invitación. ❤️\n\n"
+                "¿Deseas continuar?"
             )
+
+        # ==================================================
+        # SI NO SE ENTENDIO
+        # ==================================================
 
         return (
             "🥰 Cuéntame qué cambios te gustaría "
-            "realizar en tu invitación."
+            "realizar en tu invitación.\n\n"
+            "Si no deseas realizar cambios, "
+            "escribe *NO*."
         )
 
     # ==================================================
