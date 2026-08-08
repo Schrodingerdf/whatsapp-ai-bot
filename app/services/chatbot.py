@@ -13,7 +13,11 @@ class ChatBot:
     def process(self, phone: str, user_message: str):
 
         text = user_message.strip().lower()
+
         current_state = self.state.get_state(phone)
+
+        # Actualizar actividad del usuario
+        self.state.touch(phone)
 
         # ==================================================
         # MENU PRINCIPAL

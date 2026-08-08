@@ -22,7 +22,10 @@ class StateManager:
             minutes=SESSION_TIMEOUT_MINUTES
         )
 
-        # Verificar si la sesión expiró
+        # ==================================================
+        # SESIÓN EXPIRADA
+        # ==================================================
+
         if datetime.now() >= expiration_time:
 
             print("=" * 60)
@@ -43,6 +46,19 @@ class StateManager:
             "state": state,
             "last_activity": datetime.now()
         }
+
+    def touch(self, phone: str):
+
+        """
+        Actualiza la última actividad del usuario
+        sin cambiar su estado.
+        """
+
+        user_data = self.user_states.get(phone)
+
+        if user_data:
+
+            user_data["last_activity"] = datetime.now()
 
     def reset_state(self, phone: str):
 

@@ -4,8 +4,6 @@ from fastapi.responses import PlainTextResponse
 from app.config import VERIFY_TOKEN
 from app.services.whatsapp import WhatsAppService
 from app.services.chatbot import ChatBot
-from app.services.state import StateManager
-from app.services.reminder import ReminderService
 
 router = APIRouter(
     prefix="/webhook",
@@ -14,8 +12,6 @@ router = APIRouter(
 
 whatsapp = WhatsAppService()
 chatbot = ChatBot()
-state = StateManager()
-reminder = ReminderService()
 
 
 @router.get("")
@@ -53,19 +49,19 @@ async def receive_message(request: Request):
         phone = message["from"]
         user_message = message["text"]["body"]
 
-        # El usuario escribió, cancelar cualquier recordatorio pendiente
-        reminder.cancel(phone)
-
         print("=" * 60)
         print("USUARIO:", phone)
         print("MENSAJE:", user_message)
         print("=" * 60)
 
         # Estado antes de procesar el mensaje
-        previous_state = state.get_state(phone)
+        previous_state = chatbot.state.get_state(phone)
 
         # Procesar chatbot
-        response = chatbot.process(phone, user_message)
+        response = chatbot.process(
+            phone,
+            user_message
+        )
 
         # Enviar respuesta
         whatsapp.send_text(
@@ -89,8 +85,5 @@ async def receive_message(request: Request):
         print("ERROR EN WEBHOOK")
         print(e)
         print("=" * 60)
-        
-    # Programar un nuevo recordatorio
-    reminder.schedule(phone)
-    return {"status": "ok"}
 
+    return {"status": "ok"}
