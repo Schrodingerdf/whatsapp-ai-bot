@@ -15,6 +15,7 @@ router = APIRouter(
 whatsapp = WhatsAppService()
 chatbot = ChatBot()
 state = StateManager()
+reminder = ReminderService()
 
 
 @router.get("")
@@ -52,6 +53,9 @@ async def receive_message(request: Request):
         phone = message["from"]
         user_message = message["text"]["body"]
 
+        # El usuario escribió, cancelar cualquier recordatorio pendiente
+        reminder.cancel(phone)
+
         print("=" * 60)
         print("USUARIO:", phone)
         print("MENSAJE:", user_message)
@@ -85,5 +89,8 @@ async def receive_message(request: Request):
         print("ERROR EN WEBHOOK")
         print(e)
         print("=" * 60)
-
+        
+    # Programar un nuevo recordatorio
+    reminder.schedule(phone)
     return {"status": "ok"}
+

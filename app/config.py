@@ -22,6 +22,9 @@ REMINDER_SECONDS = int(os.getenv("REMINDER_SECONDS", "180"))
 
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY", "")
 GEMINI_MODEL = os.getenv("GEMINI_MODEL", "gemini-2.5-flash-lite")
+SESSION_TIMEOUT_MINUTES = int(
+    os.getenv("SESSION_TIMEOUT_MINUTES", "30")
+)
 
 print("=" * 60)
 print("CONFIG CARGADA")
