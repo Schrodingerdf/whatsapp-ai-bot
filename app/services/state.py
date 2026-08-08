@@ -14,6 +14,11 @@ class StateManager:
 
         # Usuario nuevo
         if user_data is None:
+            print("=" * 60)
+            print("USUARIO NUEVO")
+            print("USUARIO:", phone)
+            print("=" * 60)
+
             return "MENU_PRINCIPAL"
 
         last_activity = user_data["last_activity"]
@@ -22,11 +27,23 @@ class StateManager:
             minutes=SESSION_TIMEOUT_MINUTES
         )
 
+        now = datetime.now()
+
+        print("=" * 60)
+        print("VERIFICANDO SESION")
+        print("USUARIO:", phone)
+        print("ESTADO:", user_data["state"])
+        print("ULTIMA ACTIVIDAD:", last_activity)
+        print("AHORA:", now)
+        print("EXPIRA:", expiration_time)
+        print("TIMEOUT:", SESSION_TIMEOUT_MINUTES, "minutos")
+        print("=" * 60)
+
         # ==================================================
-        # SESIÓN EXPIRADA
+        # SESION EXPIRADA
         # ==================================================
 
-        if datetime.now() >= expiration_time:
+        if now >= expiration_time:
 
             print("=" * 60)
             print("SESION EXPIRADA")
@@ -47,12 +64,14 @@ class StateManager:
             "last_activity": datetime.now()
         }
 
-    def touch(self, phone: str):
+        print("=" * 60)
+        print("ESTADO GUARDADO")
+        print("USUARIO:", phone)
+        print("ESTADO:", state)
+        print("HORA:", self.user_states[phone]["last_activity"])
+        print("=" * 60)
 
-        """
-        Actualiza la última actividad del usuario
-        sin cambiar su estado.
-        """
+    def touch(self, phone: str):
 
         user_data = self.user_states.get(phone)
 
@@ -60,9 +79,21 @@ class StateManager:
 
             user_data["last_activity"] = datetime.now()
 
+            print("=" * 60)
+            print("ACTIVIDAD ACTUALIZADA")
+            print("USUARIO:", phone)
+            print("HORA:", user_data["last_activity"])
+            print("=" * 60)
+
     def reset_state(self, phone: str):
 
         self.user_states[phone] = {
             "state": "MENU_PRINCIPAL",
             "last_activity": datetime.now()
         }
+
+        print("=" * 60)
+        print("ESTADO REINICIADO")
+        print("USUARIO:", phone)
+        print("NUEVO ESTADO: MENU_PRINCIPAL")
+        print("=" * 60)
